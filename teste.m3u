@@ -1,32 +1,4 @@
-#EXTINF:-1 tvg-id="br#hgtv-hd" tvg-name="HGTV 4K" tvg-logo="https://img.onetv.plus/icones_channels/HGTV.png" group-title="⭐ 4K",HGTV 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/674836.m3u8
-#EXTINF:-1 tvg-id="JPNews.br" tvg-name="JOVEM PAN NEWS 4K" tvg-logo="https://media.gazetadopovo.com.br/2021/11/09172455/ALTERA%C3%87%C3%83O03_Logo_2.jpg" group-title="⭐ 4K",JOVEM PAN NEWS 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/231463.m3u8
-#EXTINF:-1 tvg-id="TVVerdesMares.br" tvg-name="LOVE NATURE 4K" tvg-logo="https://img.onetv.plus/icones_channels/Love_Nature_HD.png" group-title="⭐ 4K",LOVE NATURE 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/231464.m3u8
-#EXTINF:-1 tvg-id="br#megapix-hd" tvg-name="MEGAPIX 4K" tvg-logo="https://img.onetv.plus/icones_channels/MEGAPIX_HD.png" group-title="⭐ 4K",MEGAPIX 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/231465.m3u8
-#EXTINF:-1 tvg-id="br#multishow-hd" tvg-name="MULTISHOW 4K" tvg-logo="https://img.onetv.plus/icones_channels/MULTISHOW_HD.png" group-title="⭐ 4K",MULTISHOW 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/231466.m3u8
-#EXTINF:-1 tvg-id="PremiereClubes.br" tvg-name="PREMIERE CLUBES 4K" tvg-logo="https://img.onetv.plus/icones_channels/PREMIERE_CLUBES_1_HD.png" group-title="⭐ 4K",PREMIERE CLUBES 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/231467.m3u8
-#EXTINF:-1 tvg-id="RedeTV.br" tvg-name="REDE TV 4K" tvg-logo="https://img.onetv.plus/icones_channels/Rede_TV!_HD.png" group-title="⭐ 4K",REDE TV 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/671620.m3u8
-#EXTINF:-1 tvg-id="br#sbt-s-o-paulo" tvg-name="SBT SP 4K" tvg-logo="https://img.onetv.plus/icones_channels/SBT_Campinas.png" group-title="⭐ 4K",SBT SP 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/231469.m3u8
-#EXTINF:-1 tvg-id="br#sportv-hd" tvg-name="SPORTV 4K" tvg-logo="https://img.onetv.plus/icones_channels/SporTV_HD.png" group-title="⭐ 4K",SPORTV 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/231470.m3u8
-#EXTINF:-1 tvg-id="br#telecine-action-hd" tvg-name="TELECINE ACTION 4K" tvg-logo="https://img.onetv.plus/icones_channels/Telecine_Action_HD.png" group-title="⭐ 4K",TELECINE ACTION 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/231471.m3u8
-#EXTINF:-1 tvg-id="br#telecine-pipoca-hd" tvg-name="TELECINE PIPOCA 4K" tvg-logo="https://img.onetv.plus/icones_channels/Telecine_Pipoca_HD.png" group-title="⭐ 4K",TELECINE PIPOCA 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/231472.m3u8
-#EXTINF:-1 tvg-id="br#telecine-premium-hd" tvg-name="TELECINE PREMIUM 4K" tvg-logo="https://img.onetv.plus/icones_channels/Telecine_Premium_HD.png" group-title="⭐ 4K",TELECINE PREMIUM 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/231473.m3u8
-#EXTINF:-1 tvg-id="br#tnt-hd" tvg-name="TNT 4K" tvg-logo="https://img.onetv.plus/icones_channels/TNT_HD.png" group-title="⭐ 4K",TNT 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/231474.m3u8
-#EXTINF:-1 tvg-id="TNTSeries.br" tvg-name="TNT SERIES 4K" tvg-logo="https://img.onetv.plus/icones_channels/TNT_SERIES_HD.png" group-title="⭐ 4K",TNT SERIES 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/231475.m3u8
-#EXTINF:-1 tvg-id="UniversalTV.br" tvg-name="UNIVERSAL TV 4K" tvg-logo="https://img.onetv.plus/icones_channels/Universal_HD.png" group-title="⭐ 4K",UNIVERSAL TV 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/231476.m3u8
-#EXTINF:-1 tvg-id="br#viva-hd" tvg-name="VIVA 4K" tvg-logo="https://www.tmsimg.com/assets/s94120_ll_h3_aa.png" group-title="⭐ 4K",VIVA 4K
-https://apontaaimeupatrao.lat:80/31164662/72884343/231478.m3u8
+#EXTM3U
+#EXT-X-SESSION-DATA:DATA-ID="com.xui.1_5_13"
+#EXTINF:-1 tvg-id="CartoonNetwork.br" tvg-name="CARTOON NETWORK 4K" tvg-logo="https://img.onetv.plus/icones_channels/CN_CARTOON_HD.png" group-title="⭐ 4K",CARTOON NETWORK 4K
+http://apontaaimeupatrao.lat:80/31164662/72884343/231451.m3u8
