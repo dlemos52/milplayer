@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#020c1b">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>MilMobile - Player IPTV</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <style>
+        :root {
+            --bg-base: #020c1b;
+            --card-bg: rgba(17, 34, 64, 0.82);
+            --gold: #ffd700;
+            --blue-accent: #00d2ff;
+            --nav-bottom-height: 66px;
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: #e6f1ff;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding-bottom: calc(var(--nav-bottom-height) + 45px);
+            overflow-x: hidden;
+        }
+
+        /* ================= TELA DE LOGIN MOBILE ================= */
+        #tela-login {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(rgba(2, 12, 27, 0.82), rgba(0, 0, 0, 0.94)), url('fundo.jpeg') no-repeat center center;
+            background-size: cover;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .login-box {
+            background: rgba(10, 25, 47, 0.92);
+            backdrop-filter: blur(14px);
+            padding: 24px 20px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 420px;
+            margin: auto;
+            border: 1px solid rgba(255, 215, 0, 0.25);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.9);
+        }
+
+        .tab-login-btn {
+            background: rgba(255, 255, 255, 0.06);
+            color: #b3b3b3;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 10px 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .tab-login-btn.active {
+            background: rgba(0, 210, 255, 0.18);
+            color: var(--gold);
+            border-color: var(--gold);
+        }
+
+        .input-login {
+            background-color: rgba(2, 12, 27, 0.9) !important;
+            border: 1px solid rgba(192, 204, 218, 0.25) !important;
+            color: #fff !important;
+            padding: 12px 14px !important;
+            font-size: 0.95rem;
+            border-radius: 10px;
+        }
+
+        .input-login:focus {
+            border-color: var(--blue-accent) !important;
+            box-shadow: 0 0 0 2px rgba(0, 210, 255, 0.2) !important;
+        }
+
+        .btn-entrar-mobile {
+            background: linear-gradient(135deg, #e50914 0%, #b20710 100%);
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            padding: 13px;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4);
+        }
+
+        .dropzone-m3u {
+            border: 2px dashed rgba(0, 210, 255, 0.45);
+            border-radius: 12px;
+            padding: 24px 16px;
+            text-align: center;
+            background: rgba(2, 12, 27, 0.6);
+            cursor: pointer;
+            transition: border-color 0.25s, background 0.25s;
+        }
+
+        .dropzone-m3u:active {
+            border-color: var(--gold);
+            background: rgba(0, 210, 255, 0.1);
+        }
+
+        /* ================= TOP BAR MOBILE ================= */
+        #painel-app { display: none; }
+
+        .topbar-mobile {
+            background: rgba(2, 12, 27, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 14px;
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+        }
+
+        .btn-zap-suporte {
+            background-color: #25D366;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.15rem;
+            text-decoration: none;
+            box-shadow: 0 3px 10px rgba(37, 211, 102, 0.35);
+        }
+
+        /* ================= CARDS GLASS ================= */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(192, 204, 218, 0.2);
+            border-radius: 14px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .glass-card:active {
+            transform: scale(0.98);
+            border-color: var(--gold);
+        }
+
+        .bg-card-tv {
+            background-image: linear-gradient(135deg, rgba(2, 12, 27, 0.86) 20%, rgba(10, 25, 47, 0.72) 100%), url('https://images.unsplash.com/photo-1593784991095-a205069470b6?auto=format&fit=crop&w=600&q=75');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .bg-card-filmes {
+            background-image: linear-gradient(135deg, rgba(2, 12, 27, 0.86) 20%, rgba(10, 25, 47, 0.72) 100%), url('https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=75');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .bg-card-series {
+            background-image: linear-gradient(135deg, rgba(2, 12, 27, 0.86) 20%, rgba(10, 25, 47, 0.72) 100%), url('https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=600&q=75');
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* ================= CARROSSÉIS TOUCH ================= */
+        .carrossel-row {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .carrossel-row::-webkit-scrollbar { display: none; }
+
+        .card-midia-mini {
+            min-width: 132px;
+            max-width: 132px;
+            scroll-snap-align: start;
+            cursor: pointer;
+        }
+
+        /* PILLS DE CATEGORIA TV */
+        .categorias-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .categorias-pills::-webkit-scrollbar { display: none; }
+
+        .pill-cat {
+            white-space: nowrap;
+            background: rgba(17, 34, 64, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #e6f1ff;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .pill-cat.active {
+            background: var(--blue-accent);
+            color: #020c1b;
+            border-color: var(--blue-accent);
+        }
+
+        /* ================= MENU DE PERFIL FLUTUANTE ================= */
+        #menu-perfil {
+            position: fixed;
+            top: 62px;
+            right: 12px;
+            width: 280px;
+            background: rgba(10, 25, 47, 0.98);
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            border-radius: 14px;
+            display: none;
+            z-index: 1050;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.92);
+            padding: 18px;
+        }
+
+        /* ================= NAVEGAÇÃO INFERIOR MOBILE ================= */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--nav-bottom-height);
+            background: rgba(2, 12, 27, 0.98);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1030;
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #8892b0;
+            text-decoration: none;
+            font-size: 0.72rem;
+            font-weight: 600;
+            gap: 4px;
+            flex: 1;
+            height: 100%;
+            border: none;
+            background: transparent;
+        }
+
+        .bottom-nav-item i {
+            font-size: 1.15rem;
+        }
+
+        .bottom-nav-item.active {
+            color: var(--gold);
+        }
+
+        .footer-copyright {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #8892b0;
+            padding: 12px 0;
+        }
+
+        /* ================= PLAYER FULLSCREEN MOBILE ================= */
+        #modal-player {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            z-index: 99999;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #video-player-element {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        .player-overlay-top {
+            position: absolute;
+            top: 0; left: 0; width: 100%;
+            padding: 14px 16px;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.9), transparent);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: opacity 0.35s ease;
+        }
+
+        .player-overlay-bottom {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            padding: 14px 16px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.92), transparent);
+            z-index: 10;
+            transition: opacity 0.35s ease;
+        }
+
+        .player-escondido {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ================= TOAST CENTRAL & MODAL PARENTAL ================= */
+        #toast-central {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 25, 47, 0.97);
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            padding: 16px 24px;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            z-index: 100001;
+            display: none;
+            text-align: center;
+            width: 85%;
+            max-width: 340px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.95);
+        }
+
+        #modal-senha-adulto {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.82);
+            z-index: 100000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .box-senha-adulto {
+            background: rgba(10, 25, 47, 0.98);
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%;
+            max-width: 340px;
+            text-align: center;
+        }
+
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+
+        /* Adaptação automática para celular deitado (Landscape) */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .login-box { padding: 14px 18px; }
+            .topbar-mobile { padding: 6px 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast-central"></div>
+
+    <!-- Modal Centralizado para PIN Adulto -->
+    <div id="modal-senha-adulto">
+        <div class="box-senha-adulto">
+            <h5 class="text-white fw-bold mb-2"><i class="fa-solid fa-lock text-warning me-2"></i>Controle Parental</h5>
+            <p class="text-secondary small mb-3">Digite a senha de 4 dígitos (0000) para liberar o conteúdo adulto:</p>
+            <input type="password" inputmode="numeric" id="input-pin-adulto" maxlength="4" class="form-control bg-dark text-white border-secondary text-center fs-4 fw-bold mb-3" placeholder="••••">
+            <div class="d-flex justify-content-center gap-2">
+                <button type="button" class="btn btn-outline-secondary px-3" onclick="fecharModalAdulto()">Cancelar</button>
+                <button type="button" class="btn btn-warning fw-bold px-4" onclick="confirmarSenhaAdulto()">Liberar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= TELA DE LOGIN MOBILE ================= -->
+    <div id="tela-login">
+        <div class="text-center pt-2 pb-3">
+            <img src="logo.png" alt="MilPlay" onerror="this.style.display='none'" style="height: 68px; object-fit: contain;">
+            <div class="fw-bold text-warning small mt-1" style="letter-spacing: 1.5px;">MILMOBILE IPTV</div>
+        </div>
+
+        <div class="login-box">
+            <!-- Seletor de Modo de Acesso -->
+            <div class="d-grid gap-2 mb-3" style="grid-template-columns: 1fr 1fr;">
+                <button type="button" class="tab-login-btn active" id="btn-modo-url" onclick="alternarModoLogin('url')">
+                    <i class="fa-solid fa-globe me-1"></i> URL / Login
+                </button>
+                <button type="button" class="tab-login-btn" id="btn-modo-arquivo" onclick="alternarModoLogin('arquivo')">
+                    <i class="fa-solid fa-file-arrow-up me-1"></i> Playlist .M3U
+                </button>
+            </div>
+
+            <!-- MODO 1: URL / USUÁRIO E SENHA -->
+            <form id="formLoginUrl" autocomplete="off">
+                <div class="mb-2">
+                    <label class="form-label small text-secondary mb-1">Servidor (HTTP, HTTPS, IP ou DNS) / Link M3U</label>
+                    <input type="text" id="log_servidor" class="form-control input-login" placeholder="http://servidor.com:8080 ou link .m3u" required>
+                </div>
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <label class="form-label small text-secondary mb-1">Usuário (Opcional se link M3U)</label>
+                        <input type="text" id="log_usuario" class="form-control input-login" placeholder="Usuário">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label small text-secondary mb-1">Senha</label>
+                        <input type="password" id="log_senha" class="form-control input-login" placeholder="Senha">
+                    </div>
+                </div>
+                <button type="submit" id="btn-submit-url" class="btn btn-entrar-mobile w-100">
+                    <i class="fa-solid fa-right-to-bracket me-2"></i>Conectar Agora
+                </button>
+            </form>
+
+            <!-- MODO 2: ARQUIVO LOCAL PLAYLIST.M3U -->
+            <div id="formLoginArquivo" style="display: none;">
+                <label for="input-arquivo-m3u" class="dropzone-m3u w-100 mb-3">
+                    <i class="fa-solid fa-cloud-arrow-up fs-1 text-info mb-2"></i>
+                    <div class="fw-bold text-white" id="nome-arquivo-selecionado">Toque para selecionar playlist.m3u</div>
+                    <small class="text-secondary d-block mt-1">Carregamento instantâneo direto da memória do celular</small>
+                </label>
+                <input type="file" id="input-arquivo-m3u" accept=".m3u,.m3u8,text/plain" class="d-none" onchange="arquivoM3USelecionado(this)">
+                <button type="button" onclick="processarArquivoLocal()" class="btn btn-entrar-mobile w-100">
+                    <i class="fa-solid fa-play me-2"></i>Abrir Playlist Local
+                </button>
+            </div>
+
+            <div id="login-status" class="text-warning small text-center mt-3 fw-semibold"></div>
+        </div>
+
+        <div class="footer-copyright">
+            Direitos Reservados Demilson Lemos @2026
+        </div>
+    </div>
+
+    <!-- ================= PAINEL PRINCIPAL MOBILE ================= -->
+    <div id="painel-app">
+        <!-- Barra Superior Compacta -->
+        <header class="topbar-mobile d-flex align-items-center justify-content-between gap-2">
+            <div class="d-flex align-items-center gap-2" onclick="mudarAba('inicio')" style="cursor:pointer;">
+                <img src="logo.png" alt="MilPlay" onerror="this.style.display='none'" style="height: 36px;">
+                <span class="fw-bold text-warning small">MilMobile</span>
+            </div>
+
+            <!-- Busca Rápida -->
+            <div class="input-group input-group-sm flex-grow-1 mx-1" style="max-width: 220px;">
+                <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fa-solid fa-magnifying-glass"></i></span>
+                <input type="text" id="input-busca-global" class="form-control bg-dark text-white border-secondary" placeholder="Buscar..." onkeyup="buscarGlobal(this.value)">
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <a href="https://api.whatsapp.com/send?phone=5521990288979&text=Ol%C3%A1%2C%20preciso%20de%20suporte%20no%20MilMobile!" target="_blank" rel="noopener noreferrer" class="btn-zap-suporte" title="Suporte WhatsApp">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+                <button onclick="toggleMenuPerfil()" id="btn-perfil-num" class="btn btn-info btn-sm rounded-circle fw-bold text-dark d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                    M
+                </button>
+            </div>
+        </header>
+
+        <!-- Menu Flutuante de Perfil -->
+        <div id="menu-perfil">
+            <div class="d-flex align-items-center gap-3 mb-3 pb-2 border-bottom border-secondary">
+                <div class="bg-info text-dark rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 40px; height: 40px;" id="menu-avatar">M</div>
+                <div class="overflow-hidden">
+                    <h6 class="mb-0 text-white fw-bold text-truncate" id="menu-usuario-txt">Assinante</h6>
+                    <span class="badge bg-success" style="font-size: 10px;">CONECTADO</span>
+                </div>
+            </div>
+            <div class="small mb-2">
+                <span class="text-secondary">Fonte:</span>
+                <div class="fw-bold text-info text-truncate" id="menu-fonte-txt">-</div>
+            </div>
+            <hr class="border-secondary my-2">
+            <ul class="list-unstyled mb-0 small">
+                <li class="py-2" onclick="pedirSenhaAdulto(); toggleMenuPerfil();" style="cursor: pointer;">
+                    <i class="fa-solid fa-eye-slash text-warning me-2" id="icone-adulto"></i>
+                    <span id="texto-adulto">Conteúdo adulto: oculto</span>
+                </li>
+                <li class="py-2 border-top border-secondary mt-1" onclick="sairDoApp()" style="cursor: pointer;">
+                    <span class="text-danger fw-bold"><i class="fa-solid fa-right-from-bracket me-2"></i>Trocar Lista / Sair</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- ================= ABA: INÍCIO ================= -->
+        <section id="view-inicio" class="view-section active container-fluid px-3 py-3">
+            <div class="text-info fw-semibold small" id="saudacao-horario">BOA NOITE</div>
+            <h4 class="text-white fw-bold mb-3" id="lbl-usuario-topo">Bem-vindo ao MilMobile</h4>
+
+            <!-- Cards Principais Empilhados para Mobile -->
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <div class="glass-card bg-card-tv p-3 d-flex justify-content-between align-items-center" onclick="mudarAba('tv')">
+                        <div>
+                            <span class="badge bg-danger mb-1"><i class="fa-solid fa-circle me-1" style="font-size: 7px;"></i> AO VIVO</span>
+                            <h5 class="fw-bold text-white mb-0">TV ao Vivo</h5>
+                            <small class="text-light opacity-75" id="qtd-canais-card">0 canais</small>
+                        </div>
+                        <div class="bg-info bg-opacity-25 rounded-circle p-3 text-info">
+                            <i class="fa-solid fa-tv fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="glass-card bg-card-filmes p-3 h-100" onclick="mudarAba('filmes')">
+                        <div class="bg-info bg-opacity-25 rounded-3 d-inline-flex p-2 text-info mb-2">
+                            <i class="fa-solid fa-film fs-5"></i>
+                        </div>
+                        <h6 class="fw-bold text-white mb-0">Filmes</h6>
+                        <small class="text-light opacity-75" id="qtd-filmes-card">0 títulos</small>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="glass-card bg-card-series p-3 h-100" onclick="mudarAba('series')">
+                        <div class="bg-info bg-opacity-25 rounded-3 d-inline-flex p-2 text-info mb-2">
+                            <i class="fa-solid fa-clapperboard fs-5"></i>
+                        </div>
+                        <h6 class="fw-bold text-white mb-0">Séries</h6>
+                        <small class="text-light opacity-75" id="qtd-series-card">0 séries</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Carrossel Filmes Recentes -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="fw-bold text-white mb-0">Filmes em destaque</h6>
+                <a href="#" class="text-info text-decoration-none small fw-bold" onclick="mudarAba('filmes')">Ver tudo</a>
+            </div>
+            <div class="carrossel-row mb-4" id="home-carrossel-filmes"></div>
+
+            <!-- Carrossel Séries Recentes -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="fw-bold text-white mb-0">Séries em destaque</h6>
+                <a href="#" class="text-info text-decoration-none small fw-bold" onclick="mudarAba('series')">Ver tudo</a>
+            </div>
+            <div class="carrossel-row mb-3" id="home-carrossel-series"></div>
+        </section>
+
+        <!-- ================= ABA: TV AO VIVO ================= -->
+        <section id="view-tv" class="view-section container-fluid px-3 py-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="text-white fw-bold mb-0" id="titulo-categoria-tv">Todos os canais</h5>
+                <small class="text-info fw-bold" id="total-canais-txt">0</small>
+            </div>
+
+            <!-- Filtro Horizontal de Categorias (Touch) -->
+            <div class="categorias-pills mb-2" id="lista-categorias-tv"></div>
+
+            <input type="text" id="busca-canal-input" class="form-control form-control-sm bg-dark text-white border-secondary mb-3" placeholder="🔍 Filtrar canal..." onkeyup="renderizarCanaisTV()">
+
+            <div class="row g-2" id="grid-todos-canais"></div>
+        </section>
+
+        <!-- ================= ABA: FILMES ================= -->
+        <section id="view-filmes" class="view-section container-fluid px-3 py-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="text-white fw-bold mb-0">Filmes</h5>
+                <small class="text-secondary" id="total-filmes-txt">0</small>
+            </div>
+            <input type="text" id="busca-filme-input" class="form-control form-control-sm bg-dark text-white border-secondary mb-3" placeholder="🔍 Buscar filme..." onkeyup="filtrarFilmes()">
+            <div class="row g-2" id="grid-todos-filmes"></div>
+            <div class="text-center mt-3" id="container-carregar-mais-filmes" style="display: none;">
+                <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-4 fw-bold" onclick="carregarMaisFilmes()">Carregar mais</button>
+            </div>
+        </section>
+
+        <!-- ================= ABA: SÉRIES ================= -->
+        <section id="view-series" class="view-section container-fluid px-3 py-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h5 class="text-white fw-bold mb-0">Séries</h5>
+                <small class="text-secondary" id="total-series-txt">0</small>
+            </div>
+            <input type="text" id="busca-serie-input" class="form-control form-control-sm bg-dark text-white border-secondary mb-3" placeholder="🔍 Buscar série..." onkeyup="filtrarSeries()">
+            <div class="row g-2" id="grid-todas-series"></div>
+            <div class="text-center mt-3" id="container-carregar-mais-series" style="display: none;">
+                <button type="button" class="btn btn-sm btn-outline-warning rounded-pill px-4 fw-bold" onclick="carregarMaisSeries()">Carregar mais</button>
+            </div>
+        </section>
+
+        <!-- ================= ABA: MINHA LISTA ================= -->
+        <section id="view-lista" class="view-section container-fluid px-3 py-3">
+            <h5 class="text-white fw-bold mb-1">Minha Lista</h5>
+            <p class="text-secondary small mb-3">Seus canais e títulos favoritos salvos no aparelho.</p>
+            <div class="row g-2" id="grid-minha-lista"></div>
+        </section>
+
+        <div class="footer-copyright">
+            Direitos Reservados Demilson Lemos @2026
+        </div>
+
+        <!-- Barra de Navegação Inferior Fixa -->
+        <nav class="bottom-nav">
+            <button class="bottom-nav-item active" id="nav-inicio" onclick="mudarAba('inicio')">
+                <i class="fa-solid fa-house"></i>
+                <span>Início</span>
+            </button>
+            <button class="bottom-nav-item" id="nav-tv" onclick="mudarAba('tv')">
+                <i class="fa-solid fa-tv"></i>
+                <span>TV</span>
+            </button>
+            <button class="bottom-nav-item" id="nav-filmes" onclick="mudarAba('filmes')">
+                <i class="fa-solid fa-film"></i>
+                <span>Filmes</span>
+            </button>
+            <button class="bottom-nav-item" id="nav-series" onclick="mudarAba('series')">
+                <i class="fa-solid fa-clapperboard"></i>
+                <span>Séries</span>
+            </button>
+            <button class="bottom-nav-item" id="nav-lista" onclick="mudarAba('lista')">
+                <i class="fa-solid fa-heart"></i>
+                <span>Lista</span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- ================= MODAL PLAYER FULLSCREEN ================= -->
+    <div id="modal-player">
+        <div class="player-overlay-top">
+            <button class="btn btn-sm btn-outline-light rounded-circle" onclick="fecharPlayer()"><i class="fa-solid fa-arrow-left"></i></button>
+            <div class="overflow-hidden">
+                <h6 class="text-white fw-bold mb-0 text-truncate" id="player-titulo-canal">CANAL</h6>
+                <small class="text-info" id="player-subtitulo">Ao vivo</small>
+            </div>
+        </div>
+
+        <video id="video-player-element" controls autoplay playsinline></video>
+
+        <div class="player-overlay-bottom" id="player-epg-bar">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="small text-light text-truncate me-2" id="player-status-stream">Conectando...</span>
+                <button class="btn btn-sm btn-outline-warning" onclick="toggleFullscreen()"><i class="fa-solid fa-expand"></i> Tela Cheia</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ================= SEGURANÇA & SANITIZAÇÃO (PROTEÇÃO CONTRA XSS) ================= */
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function sanitizarURL(url) {
+            if (!url) return '';
+            const limpa = url.trim();
+            // Permite apenas protocolos seguros de rede (http, https)
+            if (/^https?:\/\//i.test(limpa)) {
+                return limpa;
+            }
+            return '';
+        }
+
+        /* ================= VARIÁVEIS DE ESTADO ================= */
+        let baseTV = [];
+        let baseFilmes = [];
+        let baseSeries = [];
+        let adultoLiberado = false;
+        let categoriaAtualTV = 'TODOS';
+        let minhaLista = JSON.parse(localStorage.getItem('milmobile_favoritos') || '[]');
+        let hlsInstance = null;
+        let temporizadorInatividade = null;
+        let temporizadorAviso = null;
+        let arquivoM3UAtual = null;
+
+        let limiteFilmesExibidos = 30;
+        let limiteSeriesExibidas = 30;
+
+        // Saudação por horário
+        const hora = new Date().getHours();
+        document.getElementById('saudacao-horario').innerText =
+            (hora >= 5 && hora < 12) ? "BOM DIA" : (hora >= 12 && hora < 18) ? "BOA TARDE" : "BOA NOITE";
+
+        // Notificação centralizada (4 segundos)
+        function mostrarAviso(texto) {
+            const box = document.getElementById('toast-central');
+            box.innerText = texto;
+            box.style.display = 'block';
+            clearTimeout(temporizadorAviso);
+            temporizadorAviso = setTimeout(() => { box.style.display = 'none'; }, 4000);
+        }
+
+        /* ================= ALTERNÂNCIA DE MODO DE LOGIN ================= */
+        function alternarModoLogin(modo) {
+            document.getElementById('login-status').innerText = '';
+            if (modo === 'url') {
+                document.getElementById('btn-modo-url').classList.add('active');
+                document.getElementById('btn-modo-arquivo').classList.remove('active');
+                document.getElementById('formLoginUrl').style.display = 'block';
+                document.getElementById('formLoginArquivo').style.display = 'none';
+            } else {
+                document.getElementById('btn-modo-arquivo').classList.add('active');
+                document.getElementById('btn-modo-url').classList.remove('active');
+                document.getElementById('formLoginArquivo').style.display = 'block';
+                document.getElementById('formLoginUrl').style.display = 'none';
+            }
+        }
+
+        function arquivoM3USelecionado(input) {
+            if (input.files && input.files[0]) {
+                arquivoM3UAtual = input.files[0];
+                document.getElementById('nome-arquivo-selecionado').innerText = arquivoM3UAtual.name;
+            }
+        }
+
+        /* ================= MOTOR ANTI-CORS (HTTP / HTTPS / IP / DNS) ================= */
+        async function baixarPlaylistSemBloqueio(urlDestino) {
+            const statusEl = document.getElementById('login-status');
+
+            // Lista de rotas: 1ª tentativa direta, seguidas de proxies CORS para contornar bloqueios HTTP/HTTPS e CORS do navegador
+            const rotas = [
+                urlDestino,
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(urlDestino)}`,
+                `https://corsproxy.io/?${encodeURIComponent(urlDestino)}`
+            ];
+
+            for (let i = 0; i < rotas.length; i++) {
+                try {
+                    if (i > 0) statusEl.innerText = `Contornando bloqueio CORS/SSL (Rota ${i + 1})...`;
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 18000);
+
+                    const resposta = await fetch(rotas[i], { signal: controller.signal });
+                    clearTimeout(timeoutId);
+
+                    if (resposta.ok) {
+                        const texto = await resposta.text();
+                        if (texto && texto.includes('#EXTM3U')) {
+                            return texto;
+                        }
+                    }
+                } catch (err) {
+                    // Continua para a próxima rota de fallback
+                }
+            }
+            throw new Error('Não foi possível baixar a lista. Verifique o endereço ou importe o arquivo .m3u diretamente.');
+        }
+
+        /* ================= LOGIN VIA URL / XTREAM ================= */
+        document.getElementById('formLoginUrl').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const servidorRaw = document.getElementById('log_servidor').value.trim();
+            const usuario = document.getElementById('log_usuario').value.trim();
+            const senha = document.getElementById('log_senha').value.trim();
+            const statusEl = document.getElementById('login-status');
+            const btn = document.getElementById('btn-submit-url');
+
+            if (!servidorRaw) return;
+
+            let urlFinal = servidorRaw;
+            if (!/^https?:\/\//i.test(urlFinal)) {
+                urlFinal = 'http://' + urlFinal;
+            }
+
+            // Se usuário e senha foram preenchidos e não é um link get.php pronto, monta a URL Xtream
+            if (usuario && senha && !urlFinal.includes('get.php') && !urlFinal.endsWith('.m3u') && !urlFinal.endsWith('.m3u8')) {
+                urlFinal = urlFinal.replace(/\/+$/, '') + `/get.php?username=${encodeURIComponent(usuario)}&password=${encodeURIComponent(senha)}&type=m3u_plus&output=ts`;
+            }
+
+            btn.disabled = true;
+            statusEl.innerText = 'Conectando ao servidor IPTV...';
+
+            try {
+                const conteudoM3U = await baixarPlaylistSemBloqueio(urlFinal);
+                iniciarSessaoComM3U(conteudoM3U, usuario || 'Assinante', new URL(urlFinal).hostname);
+            } catch (erro) {
+                statusEl.innerText = erro.message;
+                mostrarAviso(erro.message);
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        /* ================= LOGIN VIA ARQUIVO LOCAL .M3U ================= */
+        function processarArquivoLocal() {
+            const statusEl = document.getElementById('login-status');
+            if (!arquivoM3UAtual) {
+                mostrarAviso('Selecione um arquivo playlist.m3u primeiro!');
+                return;
+            }
+
+            statusEl.innerText = 'Lendo playlist local...';
+            const leitor = new FileReader();
+            leitor.onload = function(e) {
+                const conteudo = e.target.result;
+                if (!conteudo || !conteudo.includes('#EXTM3U')) {
+                    statusEl.innerText = 'Arquivo inválido. Certifique-se de que é uma lista #EXTM3U.';
+                    mostrarAviso('Arquivo M3U inválido!');
+                    return;
+                }
+                iniciarSessaoComM3U(conteudo, 'Arquivo Local', arquivoM3UAtual.name);
+            };
+            leitor.onerror = function() {
+                statusEl.innerText = 'Erro ao ler o arquivo no dispositivo.';
+            };
+            leitor.readAsText(arquivoM3UAtual);
+        }
+
+        /* ================= PARSER M3U INTELIGENTE (TV, FILMES E SÉRIES) ================= */
+        function iniciarSessaoComM3U(conteudoM3U, nomeUsuario, fonteInfo) {
+            baseTV = [];
+            baseFilmes = [];
+            baseSeries = [];
+
+            const linhas = conteudoM3U.split(/\r?\n/);
+            let itemAtual = null;
+
+            for (let i = 0; i < linhas.length; i++) {
+                const linha = linhas[i].trim();
+                if (!linha) continue;
+
+                if (linha.startsWith('#EXTINF:')) {
+                    const logoMatch = linha.match(/tvg-logo="([^"]*)"/i);
+                    const groupMatch = linha.match(/group-title="([^"]*)"/i);
+                    const virgulaIdx = linha.lastIndexOf(',');
+                    const nomeCanal = virgulaIdx !== -1 ? linha.substring(virgulaIdx + 1).trim() : 'Canal sem nome';
+
+                    itemAtual = {
+                        name: nomeCanal,
+                        tvg_logo: logoMatch ? sanitizarURL(logoMatch[1]) : '',
+                        group_title: groupMatch ? groupMatch[1].trim() : 'Geral',
+                        url: ''
+                    };
+                } else if (!linha.startsWith('#') && itemAtual) {
+                    const urlValida = sanitizarURL(linha);
+                    if (urlValida) {
+                        itemAtual.url = urlValida;
+                        const grpLower = itemAtual.group_title.toLowerCase();
+                        const urlLower = urlValida.toLowerCase();
+
+                        if (urlLower.includes('/series/') || grpLower.includes('série') || grpLower.includes('serie') || /s\d{2}e\d{2}/i.test(itemAtual.name)) {
+                            baseSeries.push(itemAtual);
+                        } else if (urlLower.includes('/movie/') || grpLower.includes('filme') || grpLower.includes('vod') || grpLower.includes('cinema') || /\.(mp4|mkv|avi)$/i.test(urlLower)) {
+                            baseFilmes.push(itemAtual);
+                        } else {
+                            baseTV.push(itemAtual);
+                        }
+                    }
+                    itemAtual = null;
+                }
+            }
+
+            if (baseTV.length === 0 && baseFilmes.length === 0 && baseSeries.length === 0) {
+                mostrarAviso('Nenhum canal ou mídia válida encontrada na lista.');
+                return;
+            }
+
+            // Atualiza dados da interface
+            document.getElementById('lbl-usuario-topo').innerText = escapeHTML(nomeUsuario);
+            document.getElementById('menu-usuario-txt').innerText = escapeHTML(nomeUsuario);
+            document.getElementById('menu-fonte-txt').innerText = escapeHTML(fonteInfo);
+            document.getElementById('btn-perfil-num').innerText = nomeUsuario.substring(0, 1).toUpperCase();
+            document.getElementById('menu-avatar').innerText = nomeUsuario.substring(0, 1).toUpperCase();
+
+            document.getElementById('tela-login').style.display = 'none';
+            document.getElementById('painel-app').style.display = 'block';
+
+            atualizarInterfaceConteudos();
+            renderizarMinhaLista();
+            mostrarAviso(`Lista carregada: ${baseTV.length + baseFilmes.length + baseSeries.length} itens!`);
+        }
+
+        function sairDoApp() {
+            fecharPlayer();
+            baseTV = [];
+            baseFilmes = [];
+            baseSeries = [];
+            document.getElementById('menu-perfil').style.display = 'none';
+            document.getElementById('painel-app').style.display = 'none';
+            document.getElementById('tela-login').style.display = 'flex';
+            document.getElementById('login-status').innerText = '';
+        }
+
+        function ehConteudoAdulto(item) {
+            const texto = ((item.group_title || '') + ' ' + (item.name || '')).toLowerCase();
+            return texto.includes('adulto') || texto.includes('xxx') || texto.includes('+18') || texto.includes('hot') || texto.includes('sexo');
+        }
+
+        /* ================= RENDERIZAÇÃO DA INTERFACE ================= */
+        function atualizarInterfaceConteudos() {
+            const tvVisivel = baseTV.filter(i => adultoLiberado || !ehConteudoAdulto(i));
+            const filmesVisivel = baseFilmes.filter(i => adultoLiberado || !ehConteudoAdulto(i));
+            const seriesVisivel = baseSeries.filter(i => adultoLiberado || !ehConteudoAdulto(i));
+
+            document.getElementById('qtd-canais-card').innerText = `${tvVisivel.length.toLocaleString('pt-BR')} canais`;
+            document.getElementById('qtd-filmes-card').innerText = `${filmesVisivel.length.toLocaleString('pt-BR')} títulos`;
+            document.getElementById('qtd-series-card').innerText = `${seriesVisivel.length.toLocaleString('pt-BR')} séries`;
+
+            // Carrossel Home Filmes
+            const homeFilmes = document.getElementById('home-carrossel-filmes');
+            homeFilmes.innerHTML = '';
+            filmesVisivel.slice(0, 12).forEach((f, idx) => {
+                const capa = f.tvg_logo || `https://picsum.photos/150/220?random=${idx + 10}`;
+                const card = document.createElement('div');
+                card.className = 'glass-card p-2 card-midia-mini';
+                card.onclick = () => abrirMidia(f, 'Filme');
+                card.innerHTML = `
+                    <img src="${escapeHTML(capa)}" onerror="this.src='https://picsum.photos/150/220?random=${idx + 30}'" class="w-100 rounded mb-1" style="height: 165px; object-fit: cover;">
+                    <div class="small fw-bold text-white text-truncate">${escapeHTML(f.name)}</div>
+                `;
+                homeFilmes.appendChild(card);
+            });
+
+            // Carrossel Home Séries
+            const homeSeries = document.getElementById('home-carrossel-series');
+            homeSeries.innerHTML = '';
+            seriesVisivel.slice(0, 12).forEach((s, idx) => {
+                const capa = s.tvg_logo || `https://picsum.photos/150/220?random=${idx + 50}`;
+                const card = document.createElement('div');
+                card.className = 'glass-card p-2 card-midia-mini';
+                card.onclick = () => abrirMidia(s, 'Série');
+                card.innerHTML = `
+                    <img src="${escapeHTML(capa)}" onerror="this.src='https://picsum.photos/150/220?random=${idx + 70}'" class="w-100 rounded mb-1" style="height: 165px; object-fit: cover;">
+                    <div class="small fw-bold text-white text-truncate">${escapeHTML(s.name)}</div>
+                `;
+                homeSeries.appendChild(card);
+            });
+
+            montarCategoriasTV(tvVisivel);
+            renderizarCanaisTV();
+            renderizarFilmes();
+            renderizarSeries();
+        }
+
+        function montarCategoriasTV(tvVisivel) {
+            const catBox = document.getElementById('lista-categorias-tv');
+            catBox.innerHTML = '';
+
+            const grupos = {};
+            tvVisivel.forEach(c => {
+                const g = c.group_title || 'Geral';
+                grupos[g] = (grupos[g] || 0) + 1;
+            });
+
+            const btnTodos = document.createElement('button');
+            btnTodos.className = 'pill-cat active';
+            btnTodos.innerText = `Todos (${tvVisivel.length})`;
+            btnTodos.onclick = () => selecionarCategoriaTV('TODOS', btnTodos);
+            catBox.appendChild(btnTodos);
+
+            Object.keys(grupos).forEach(g => {
+                const btn = document.createElement('button');
+                btn.className = 'pill-cat';
+                btn.innerText = `${g} (${grupos[g]})`;
+                btn.onclick = () => selecionarCategoriaTV(g, btn);
+                catBox.appendChild(btn);
+            });
+        }
+
+        function selecionarCategoriaTV(cat, btnEl) {
+            categoriaAtualTV = cat;
+            document.getElementById('titulo-categoria-tv').innerText = (cat === 'TODOS') ? 'Todos os canais' : cat;
+            document.querySelectorAll('#lista-categorias-tv .pill-cat').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
+            renderizarCanaisTV();
+        }
+
+        function renderizarCanaisTV() {
+            const termo = (document.getElementById('busca-canal-input').value || '').toLowerCase();
+            const filtrados = baseTV.filter(c => {
+                if (!adultoLiberado && ehConteudoAdulto(c)) return false;
+                if (categoriaAtualTV !== 'TODOS' && (c.group_title || 'Geral') !== categoriaAtualTV) return false;
+                return c.name.toLowerCase().includes(termo);
+            });
+
+            document.getElementById('total-canais-txt').innerText = `${filtrados.length} canais`;
+            const grid = document.getElementById('grid-todos-canais');
+            grid.innerHTML = '';
+
+            filtrados.slice(0, 120).forEach(c => {
+                const col = document.createElement('div');
+                col.className = 'col-6 col-sm-4';
+
+                const card = document.createElement('div');
+                card.className = 'glass-card p-2 h-100 d-flex flex-column justify-content-between';
+
+                const topRow = document.createElement('div');
+                topRow.className = 'd-flex justify-content-between align-items-center mb-1';
+                topRow.innerHTML = `<span class="badge bg-danger" style="font-size: 9px;">AO VIVO</span>`;
+
+                const favBtn = document.createElement('button');
+                favBtn.className = 'btn btn-sm p-0 text-info';
+                favBtn.innerHTML = '<i class="fa-regular fa-heart"></i>';
+                favBtn.onclick = (e) => { e.stopPropagation(); favoritarItem(c); };
+                topRow.appendChild(favBtn);
+
+                const bodyArea = document.createElement('div');
+                bodyArea.style.cursor = 'pointer';
+                bodyArea.onclick = () => abrirMidia(c, 'TV ao vivo');
+                bodyArea.innerHTML = `
+                    <div class="text-center my-2" style="height: 44px; display:flex; align-items:center; justify-content:center;">
+                        ${c.tvg_logo ? `<img src="${escapeHTML(c.tvg_logo)}" style="max-height:40px; max-width:65px;" onerror="this.style.display='none'">` : `<span class="fw-bold text-info">TV</span>`}
+                    </div>
+                    <div class="fw-bold text-white small text-truncate">${escapeHTML(c.name)}</div>
+                `;
+
+                card.appendChild(topRow);
+                card.appendChild(bodyArea);
+                col.appendChild(card);
+                grid.appendChild(col);
+            });
+        }
+
+        function filtrarFilmes() { limiteFilmesExibidos = 30; renderizarFilmes(); }
+        function carregarMaisFilmes() { limiteFilmesExibidos += 30; renderizarFilmes(); }
+
+        function renderizarFilmes() {
+            const termo = (document.getElementById('busca-filme-input').value || '').toLowerCase();
+            const filtrados = baseFilmes.filter(f => (adultoLiberado || !ehConteudoAdulto(f)) && f.name.toLowerCase().includes(termo));
+            const exibidos = filtrados.slice(0, limiteFilmesExibidos);
+
+            document.getElementById('total-filmes-txt').innerText = `${exibidos.length} de ${filtrados.length}`;
+            const grid = document.getElementById('grid-todos-filmes');
+            grid.innerHTML = '';
+
+            exibidos.forEach((f, idx) => {
+                const capa = f.tvg_logo || `https://picsum.photos/150/220?random=${idx + 200}`;
+                const col = document.createElement('div');
+                col.className = 'col-4 col-sm-3';
+                col.innerHTML = `
+                    <div class="glass-card p-1 h-100" style="cursor:pointer;">
+                        <img src="${escapeHTML(capa)}" onerror="this.src='https://picsum.photos/150/220?random=${idx + 300}'" class="w-100 rounded mb-1" style="height: 155px; object-fit: cover;">
+                        <div class="small fw-bold text-white text-truncate px-1">${escapeHTML(f.name)}</div>
+                    </div>
+                `;
+                col.onclick = () => abrirMidia(f, 'Filme');
+                grid.appendChild(col);
+            });
+
+            document.getElementById('container-carregar-mais-filmes').style.display = (exibidos.length < filtrados.length) ? 'block' : 'none';
+        }
+
+        function filtrarSeries() { limiteSeriesExibidas = 30; renderizarSeries(); }
+        function carregarMaisSeries() { limiteSeriesExibidas += 30; renderizarSeries(); }
+
+        function renderizarSeries() {
+            const termo = (document.getElementById('busca-serie-input').value || '').toLowerCase();
+            const filtrados = baseSeries.filter(s => (adultoLiberado || !ehConteudoAdulto(s)) && s.name.toLowerCase().includes(termo));
+            const exibidos = filtrados.slice(0, limiteSeriesExibidas);
+
+            document.getElementById('total-series-txt').innerText = `${exibidos.length} de ${filtrados.length}`;
+            const grid = document.getElementById('grid-todas-series');
+            grid.innerHTML = '';
+
+            exibidos.forEach((s, idx) => {
+                const capa = s.tvg_logo || `https://picsum.photos/150/220?random=${idx + 400}`;
+                const col = document.createElement('div');
+                col.className = 'col-4 col-sm-3';
+                col.innerHTML = `
+                    <div class="glass-card p-1 h-100" style="cursor:pointer;">
+                        <img src="${escapeHTML(capa)}" onerror="this.src='https://picsum.photos/150/220?random=${idx + 500}'" class="w-100 rounded mb-1" style="height: 155px; object-fit: cover;">
+                        <div class="small fw-bold text-white text-truncate px-1">${escapeHTML(s.name)}</div>
+                    </div>
+                `;
+                col.onclick = () => abrirMidia(s, 'Série');
+                grid.appendChild(col);
+            });
+
+            document.getElementById('container-carregar-mais-series').style.display = (exibidos.length < filtrados.length) ? 'block' : 'none';
+        }
+
+        function favoritarItem(item) {
+            if (!minhaLista.some(i => i.name === item.name)) {
+                minhaLista.push(item);
+                localStorage.setItem('milmobile_favoritos', JSON.stringify(minhaLista));
+                renderizarMinhaLista();
+                mostrarAviso(`"${item.name}" salvo em Minha Lista!`);
+            } else {
+                mostrarAviso(`"${item.name}" já está na sua lista!`);
+            }
+        }
+
+        function renderizarMinhaLista() {
+            const grid = document.getElementById('grid-minha-lista');
+            grid.innerHTML = '';
+            if (minhaLista.length === 0) {
+                grid.innerHTML = '<div class="col-12 text-secondary small">Nenhum item salvo ainda.</div>';
+                return;
+            }
+            minhaLista.forEach(m => {
+                const col = document.createElement('div');
+                col.className = 'col-6';
+                col.innerHTML = `
+                    <div class="glass-card p-2" style="cursor:pointer;">
+                        <div class="fw-bold text-white small text-truncate">${escapeHTML(m.name)}</div>
+                        <small class="text-info">${escapeHTML(m.group_title || 'Favorito')}</small>
+                    </div>
+                `;
+                col.onclick = () => abrirMidia(m, 'Minha Lista');
+                grid.appendChild(col);
+            });
+        }
+
+        /* ================= PLAYER DE VÍDEO MOBILE ================= */
+        function reiniciarTemporizadorInatividade() {
+            const topo = document.querySelector('.player-overlay-top');
+            const bottom = document.querySelector('.player-overlay-bottom');
+            if (topo && bottom) {
+                topo.classList.remove('player-escondido');
+                bottom.classList.remove('player-escondido');
+            }
+            clearTimeout(temporizadorInatividade);
+            temporizadorInatividade = setTimeout(() => {
+                if (document.getElementById('modal-player').style.display === 'flex') {
+                    if (topo) topo.classList.add('player-escondido');
+                    if (bottom) bottom.classList.add('player-escondido');
+                }
+            }, 4000);
+        }
+
+        function abrirMidia(item, tipo) {
+            const modal = document.getElementById('modal-player');
+            const video = document.getElementById('video-player-element');
+            const status = document.getElementById('player-status-stream');
+
+            document.getElementById('player-titulo-canal').innerText = item.name;
+            document.getElementById('player-subtitulo').innerText = tipo;
+            modal.style.display = 'flex';
+            reiniciarTemporizadorInatividade();
+
+            if (hlsInstance) {
+                hlsInstance.destroy();
+                hlsInstance = null;
+            }
+
+            if (item.url) {
+                status.innerText = 'Carregando sinal...';
+                if (Hls.isSupported() && (item.url.includes('.m3u8') || item.url.includes('.ts') || !item.url.match(/\.(mp4|mkv|webm)$/i))) {
+                    hlsInstance = new Hls({ enableWorker: true, lowLatencyMode: true });
+                    hlsInstance.loadSource(item.url);
+                    hlsInstance.attachMedia(video);
+                    hlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+                        video.play().catch(() => {});
+                        status.innerText = 'Reproduzindo ao vivo';
+                    });
+                    hlsInstance.on(Hls.Events.ERROR, (event, data) => {
+                        if (data.fatal) {
+                            // Fallback nativo caso o servidor não seja HLS segmentado
+                            hlsInstance.destroy();
+                            video.src = item.url;
+                            video.play().catch(() => {});
+                            status.innerText = 'Modo de compatibilidade direto';
+                        }
+                    });
+                } else {
+                    video.src = item.url;
+                    video.play().then(() => {
+                        status.innerText = 'Reproduzindo';
+                    }).catch(() => {
+                        status.innerText = 'Toque no vídeo para iniciar';
+                    });
+                }
+            } else {
+                status.innerText = 'URL de transmissão inválida.';
+            }
+        }
+
+        function fecharPlayer() {
+            const video = document.getElementById('video-player-element');
+            video.pause();
+            video.removeAttribute('src');
+            video.load();
+            if (hlsInstance) {
+                hlsInstance.destroy();
+                hlsInstance = null;
+            }
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(() => {});
+            }
+            document.getElementById('modal-player').style.display = 'none';
+        }
+
+        function toggleFullscreen() {
+            const modal = document.getElementById('modal-player');
+            if (!document.fullscreenElement) {
+                if (modal.requestFullscreen) modal.requestFullscreen().catch(() => {});
+                else if (modal.webkitRequestFullscreen) modal.webkitRequestFullscreen();
+            } else {
+                if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+            }
+        }
+
+        function buscarGlobal(termo) {
+            if (!termo.trim()) return;
+            mudarAba('tv');
+            document.getElementById('busca-canal-input').value = termo;
+            renderizarCanaisTV();
+        }
+
+        function mudarAba(aba) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.bottom-nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + aba).classList.add('active');
+            document.getElementById('nav-' + aba).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function toggleMenuPerfil() {
+            const menu = document.getElementById('menu-perfil');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        /* ================= CONTROLE PARENTAL ================= */
+        function pedirSenhaAdulto() {
+            if (adultoLiberado) {
+                adultoLiberado = false;
+                document.getElementById('icone-adulto').className = 'fa-solid fa-eye-slash text-warning me-2';
+                document.getElementById('texto-adulto').innerText = 'Conteúdo adulto: oculto';
+                atualizarInterfaceConteudos();
+                mostrarAviso('Conteúdo adulto ocultado.');
+                return;
+            }
+            document.getElementById('input-pin-adulto').value = '';
+            document.getElementById('modal-senha-adulto').style.display = 'flex';
+            document.getElementById('input-pin-adulto').focus();
+        }
+
+        function fecharModalAdulto() {
+            document.getElementById('modal-senha-adulto').style.display = 'none';
+        }
+
+        function confirmarSenhaAdulto() {
+            const senha = document.getElementById('input-pin-adulto').value.trim();
+            fecharModalAdulto();
+            if (senha === '0000') {
+                adultoLiberado = true;
+                document.getElementById('icone-adulto').className = 'fa-solid fa-eye text-success me-2';
+                document.getElementById('texto-adulto').innerText = 'Conteúdo adulto: liberado';
+                atualizarInterfaceConteudos();
+                mostrarAviso('Conteúdo adulto liberado!');
+            } else {
+                mostrarAviso('Senha incorreta!');
+            }
+        }
+
+        document.getElementById('modal-player').addEventListener('touchstart', reiniciarTemporizadorInatividade);
+        document.getElementById('modal-player').addEventListener('click', reiniciarTemporizadorInatividade);
+    </script>
+</body>
+</html>
